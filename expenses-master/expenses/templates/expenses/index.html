@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'expenses/styles.css' %}">
+</head>
+<body>
+    <h1>Expense Tracker</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="input-container">
+            <label for="expense_name">Expense Name:</label>
+            <input type="text" name="expense_name" required>
+            <label for="amount">Amount:</label>
+            <input type="number" name="amount" step="0.01" required>
+            <button type="submit">Submit</button>
+        </div>
+
+        <div class="download-button">
+            <a href="{% url 'download_csv' %}" download>Download CSV</a>
+        </div>
+
+
+    </form>
+    <div class="filter-container">
+        <label for="json_file">Select JSON File:</label>
+        <select id="json_file" name="json_file">
+            <option value="" disabled selected>Select a JSON file</option>
+            {% for json_file in json_files %}
+                <option value="{{ json_file }}">{{ json_file }}</option>
+            {% endfor %}
+        </select>
+        <button id="view_expenses">View Expenses</button>
+    </div>
+    <div class="expenses-details">
+        <h2>Expense Details {{ file_nam }}</h2>
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Expenses</th>
+                <th>Amount</th>
+            </tr>
+            {% for entry in expenses_data %}
+            <tr>
+                <td>{{ entry.date }}</td>
+                <td>
+                    {% for expense in entry.expenses %}
+                    {{ expense.expense_name }} ({{ expense.amount }})<br>
+                    {% endfor %}
+                </td>
+                <td>{{ entry.total }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="2"><strong>Grand Total:</strong></td>
+                <td><strong>{{ grand_total }}</strong></td>
+            </tr>
+        </table>
+    </div>
+    <script src="{% static 'script.js' %}"></script>
+</body>
+</html>
